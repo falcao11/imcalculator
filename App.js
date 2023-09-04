@@ -4,6 +4,7 @@ import {
     TouchableWithoutFeedback,
     View,
 } from 'react-native';
+import Footer from './src/components/Footer';
 import Form from './src/components/Form/index';
 import Title from './src/components/Title/index';
 
@@ -13,6 +14,7 @@ export default function App() {
             <View style={styles.container}>
                 <Title />
                 <Form />
+                <Footer />
             </View>
         </TouchableWithoutFeedback>
     );
