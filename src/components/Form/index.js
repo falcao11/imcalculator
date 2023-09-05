@@ -1,5 +1,11 @@
 import React, { useState } from 'react';
-import { Text, TextInput, TouchableOpacity, View } from 'react-native';
+import {
+    Text,
+    TextInput,
+    TouchableOpacity,
+    Vibration,
+    View,
+} from 'react-native';
 import ResultIMC from './ResultIMC/index';
 import styles from './style';
 
@@ -10,6 +16,7 @@ export default function Form() {
     const [tabelaIMC, setTabelaIMC] = useState('Sem IMC calculado');
     const [imc, setImc] = useState(null);
     const [textButton, setTextButton] = useState('Calcular');
+    const [errorMessage, setErrorMessage] = useState(null);
 
     function imcTabela(imc) {
         if (imc < 18.5) return 'Abaixo de peso!';
@@ -21,8 +28,11 @@ export default function Form() {
         return ''; // Certifique-se de retornar algo mesmo que nenhuma condição seja atendida.
     }
 
-    function imcCalculator() {
-        return setImc((weight / (height * height * 0.0001)).toFixed(2)); // toFixed(2) = 2 casas decimais
+    function verificationImc() {
+        if (imc == null) {
+            Vibration.vibrate();
+            setErrorMessage('Campo obrigatório*');
+        }
     }
 
     function validationImc() {
@@ -32,10 +42,14 @@ export default function Form() {
             );
             const tableText = imcTabela(calculatedImc);
             setImc(calculatedImc);
+            setHeight(null);
+            setWeight(null);
             setTabelaIMC(tableText);
             setMessageIMC('O seu IMC é:');
             setTextButton('Calcular novamente');
+            setErrorMessage(null);
         } else {
+            verificationImc();
             setImc(null);
             setTextButton('Calcular');
             setMessageIMC('Coloque o peso e a altura');
@@ -54,6 +68,7 @@ export default function Form() {
                     placeholder="Ex. 175cm"
                     keyboardType="numeric"
                 />
+                <Text style={styles.errorMessage}>{errorMessage}</Text>
                 <Text style={styles.formLabel}>Peso</Text>
                 <TextInput
                     style={styles.input}
@@ -62,6 +77,7 @@ export default function Form() {
                     placeholder="Ex. 70kg"
                     keyboardType="numeric"
                 />
+                <Text style={styles.errorMessage}>{errorMessage}</Text>
                 <TouchableOpacity
                     style={styles.buttonCalculator}
                     onPress={() => validationImc()}
